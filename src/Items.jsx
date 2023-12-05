@@ -3,13 +3,18 @@ import SingleItem from './SingleItem';
 import { authFetch } from './utils';
 
 const Items = ({ items }) => {
-  const { isLoading, data } = useQuery({
+  const { isLoading, data, isError, error } = useQuery({
     queryKey: ['task'],
     queryFn: () => authFetch.get('/'),
   });
 
   if (isLoading) {
     return <p style={{ marginTop: '1rem' }}>Loading...</p>;
+  }
+
+  if (isError) {
+    console.log(error);
+    return <p style={{ marginTop: '1rem' }}>{error.message}</p>;
   }
 
   return (
