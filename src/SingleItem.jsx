@@ -1,10 +1,28 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { authFetch } from './utils';
+import { toast } from 'react-toastify';
+
 const SingleItem = ({ item }) => {
+  const queryClient = useQueryClient();
+
+  const { mutate: editTask } = useMutation({
+    mutationFn: ({ id, value }) => authFetch.patch(`/${id}`, { isDone: value }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['task'] });
+      toast.success('item edited');
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(error.response.data.msg);
+    },
+  });
+
   return (
-    <div className='single-item'>
+    <div className="single-item">
       <input
-        type='checkbox'
+        type="checkbox"
         checked={item.isDone}
-        onChange={() => console.log('edit task')}
+        onChange={() => editTask({ id: item.id, value: !item.isDone })}
       />
       <p
         style={{
@@ -15,8 +33,8 @@ const SingleItem = ({ item }) => {
         {item.title}
       </p>
       <button
-        className='btn remove-btn'
-        type='button'
+        className="btn remove-btn"
+        type="button"
         onClick={() => console.log('delete task')}
       >
         delete
