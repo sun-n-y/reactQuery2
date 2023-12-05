@@ -17,6 +17,18 @@ const SingleItem = ({ item }) => {
     },
   });
 
+  const { mutate: deleteTask } = useMutation({
+    mutationFn: ({ id }) => authFetch.delete(`/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['task'] });
+      toast.success('item deleted');
+    },
+    onError: (error) => {
+      console.log(error);
+      toast.error(error.response.data.msg);
+    },
+  });
+
   return (
     <div className="single-item">
       <input
@@ -35,7 +47,7 @@ const SingleItem = ({ item }) => {
       <button
         className="btn remove-btn"
         type="button"
-        onClick={() => console.log('delete task')}
+        onClick={() => deleteTask({ id: item.id })}
       >
         delete
       </button>
