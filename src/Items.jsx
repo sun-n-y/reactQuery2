@@ -1,11 +1,24 @@
+import { useQuery } from '@tanstack/react-query';
 import SingleItem from './SingleItem';
+import { authFetch } from './utils';
+
 const Items = ({ items }) => {
+  const { isLoading, data } = useQuery({
+    queryKey: ['task'],
+    queryFn: () => authFetch.get('/'),
+  });
+
+  if (isLoading) {
+    return <p style={{ marginTop: '1rem' }}>Loading...</p>;
+  }
+
   return (
-    <div className='items'>
-      {items.map((item) => {
+    <div className="items">
+      {data.data.taskList.map((item) => {
         return <SingleItem key={item.id} item={item} />;
       })}
     </div>
   );
 };
+
 export default Items;
